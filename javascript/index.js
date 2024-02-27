@@ -13,11 +13,19 @@ const shouldMigrate = !fs.existsSync(filename)
  * one at a time
  *
  */
-function * generateContacts () {
+function * generateContacts (numContacts) {
  // TODO
-  yield [`name-1`, `email-1@domain.tld`]
-  yield [`name-2`, `email-2@domain.tld`]
-  yield [`name-3`, `email-3@domain.tld`]
+  const start = Date.now();
+  for(var i=0; i < numContacts; i++){
+    var listContact = [`name-${i+1}`, `email-${i+1}@domain.tld`];
+    listContact[i];
+    if(i%1000){
+      yield listContact;
+    }
+  }
+  const end = Date.now();
+  const elapsed = (end - start)/1000;
+  console.log(`Generate Contact took ${elapsed} seconds`);
 }
 
 const migrate = async (db) => {
@@ -35,6 +43,15 @@ const migrate = async (db) => {
 const insertContacts = async (db) => {
   console.log('Inserting contacts ...')
   // TODO
+  const contacts = generateContacts(numContacts);
+  const start_1 = Date.now();
+  for(contact of contacts){
+    await db.run(`INSERT INTO contacts(name, email) VALUES(?,?)`, contact);
+  }
+  const end_2 = Date.now();
+  const elapsed = (end_2 - start_1)/1000;
+  console.log(`Insert data in ${elapsed} seconds.`);
+  
 }
 
 const queryContact = async (db) => {
